@@ -32,7 +32,8 @@ public:
     void send_message(const std::string& message)
     {
         auto self = shared_from_this();
-        boost::asio::async_write(socket_, boost::asio::buffer(message),
+        std::string formatted_message = message + "\n";
+        boost::asio::async_write(socket_, boost::asio::buffer(formatted_message),
             [this, self](const boost::system::error_code& error, std::size_t /*bytes_transferred*/) {
                 if (error)
                 {
