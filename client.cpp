@@ -20,17 +20,34 @@ int main()
         tcp::socket socket(io_context);
         boost::asio::connect(socket, endpoints);
 
+
+
+
+
         for (;;)
         {
-
             std::cout << "Enter message:";
             std::string buf;
-            if (buf == "exit")
-                break;
-
             std::getline(std::cin, buf);
+            if (buf == "exit") break;
+
+            
             boost::system::error_code error;
-            boost::asio::write(socket, boost::asio::buffer(buf), error);
+ boost::asio::async_write(socket, boost::asio::buffer(buf),
+        [&socket](const boost::system::error_code& error, std::size_t bytes_transferred){
+                     if (error)
+            {
+                std::cerr << "Write error: " << error.message() << std::endl;
+            }
+            else
+            {
+                std::cout << "Sent " << bytes_transferred << " bytes." << std::endl;
+            }
+                });
+
+            std::array<char, 128> rbuf;
+            size_t len = socket.read_some(boost::asio::buffer(rbuf), error);
+            std::cout.write(rbuf.data(), len);
 
             if (error == boost::asio::error::eof)
                 break;

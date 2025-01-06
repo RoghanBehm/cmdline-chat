@@ -106,7 +106,6 @@ private:
     std::vector<std::shared_ptr<tcp_connection>> clients_;
 };
 
-// Implementation of tcp_connection::do_read
 void tcp_connection::do_read()
 {
     auto self = shared_from_this();
@@ -117,7 +116,6 @@ void tcp_connection::do_read()
                 std::string message(buffer_.data(), bytes_transferred);
                 std::cout << "Received: " << message << std::endl;
 
-                // Broadcast the message to all other clients
                 server_.broadcast_message(message, self);
 
                 do_read();
